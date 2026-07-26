@@ -1,0 +1,27 @@
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+
+from src.service.sparse_index_loader import load_sparse_index_from_cache
+from src.models.model import ChatRequest,ChatResponse
+from src.service.rag import query_compliance_platform,should_use_sparse_fallback
+
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    load_sparse_index_from_cache()
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+@app.post("/query",response_model=ChatResponse)
+async def query(req:ChatRequest):
+    question = req.question
+
+    mode = "sparse" if should_use_sparse_fallback(question) else "dense"
+
+    flags = {"search_mode": mode, "top_k": 4}
+    resp = await query_compliance_platform(question, flags)
+    return resp
+
+    
+

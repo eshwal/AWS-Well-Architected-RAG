@@ -1,0 +1,137 @@
+[
+   {
+    "id": 1,
+    "query": "What does x_amz_bedrock_agentcore_search do?",
+    "query_type": "exact_keyword",
+    "expected_source": "lenses/agentic-ai/AGENTSEC02.md",
+    "expected_answer": "Gateway's built-in x_amz_bedrock_agentcore_search tool exposes semantic tool discovery so agents locate relevant tools through natural language rather than seeing the full inventory, reducing the reasoning surface the model reasons across on any given turn."
+  },
+  {
+    "id": 2,
+    "query": "How do I prevent an agent from getting overwhelmed by tool overload?",
+    "query_type": "conceptual",
+    "expected_source": "lenses/agentic-ai/AGENTSEC02.md",
+    "expected_answer": "Use gateway's built-in semantic tool discovery tool to allow agents to discover tools via natural language rather than passing the full inventory."
+  },
+  {
+    "id": 3,
+    "query": "What fallback behaviors should I define when a capability is disabled?",
+    "query_type": "conceptual",
+    "expected_source": "lenses/agentic-ai/AGENTREL06.md",
+    "expected_answer": "Define behaviors such as semantic search falling back to keyword search, complex reasoning falling back to simpler rules, and real-time data falling back to cached values."
+  },
+  {
+    "id": 4,
+    "query": "How does Amazon Bedrock AgentCore Memory handle service unreachability?",
+    "query_type": "exact_keyword",
+    "expected_source": "lenses/agentic-ai/AGENTREL03.md",
+    "expected_answer": "It implements fail-fast logic on memory access; when elevated error rates occur, the caller stops waiting and routes to a fallback like an in-process cache for short-term memory or a read-through cache for long-term memory."
+  },
+  {
+    "id": 5,
+    "query": "What is the recommended protocol for agent-to-tool communication?",
+    "query_type": "conceptual",
+    "expected_source": "lenses/agentic-ai/AGENTPERF04.md",
+    "expected_answer": "Use MCP (Model Context Protocol) for agent-to-tool communication. Use A2A for agent-to-agent communication."
+  },
+  {
+    "id": 6,
+    "query": "My agent has access to hundreds of MCP tools. The model receives all tool definitions every time and takes longer to choose the right tool. How should I optimize this?",
+    "expected_source": "lenses/agentic-ai/AGENTPERF06.md",
+    "expected_answer": "Do not expose the complete MCP tool catalog on every reasoning step. Use Amazon Bedrock AgentCore Gateway semantic tool discovery to dynamically filter tools based on task context and provide only the most relevant tools. Keep the available tool set small (for example, 5–10 relevant tools), use MCP for standardized tool integration, and monitor tool latency and usage."
+  },
+  {
+    "id": 7,
+    "query": "How can you enforce iteration limits and token budgets for agent reasoning loops in Amazon Bedrock AgentCore to prevent unbounded token consumption?",
+    "expected_source": "lenses/agentic-ai/AGENTCOST01.md",
+    "expected_answer": "To enforce iteration limits and token budgets for agent reasoning loops in Amazon Bedrock AgentCore, you should define explicit termination conditions per agent, including a maximum iteration count, a confidence threshold, and a per-session token budget. These limits are enforced through Amazon Bedrock AgentCore Policy using Cedar policies at the AgentCore Gateway boundary, ensuring rejection at the traffic layer rather than after exceeding limits. Additionally, you must instrument per-cycle token consumption via Amazon Bedrock AgentCore Observability,which captures per-session token counts through OpenTelemetry and allows CloudWatch alarms to be configured for anomalous patterns. This approach ensures predictable token consumption and prevents unbounded loops from consuming excessive tokens before alerts are triggered."
+  },
+  {
+    "id": 8,
+    "query": "How can I implement model cascading for cost-performance optimization in Amazon Bedrock agents, and what are the key components required?",
+    "expected_source": "lenses/agentic-ai/AGENTCOST02.md",
+    "expected_answer": "To implement model cascading in Amazon Bedrock agents, you must first classify agent tasks into complexity tiers (simple, moderate, complex) and map each tier to a specific foundation model, documenting this as a routing policy.Deploy a lightweight pre-classifier (rule-based or small model) to score incoming requests based on input length, structure, constraint count, and reasoning depth,assigning them to tiers (e.g., <0.3 for simple, 0.3\u20130.7 for moderate, >0.7 for complex). Each lower-tier model must return a structured response with a self-assessed confidence score; escalate to the next tier only when confidence falls below a configured threshold. Configure primary, secondary, and tertiary fallback chains to escalate on timeouts or failures rather than retrying the same tier. Use Amazon Bedrock AgentCore Runtime to support multiple frameworks and LLM providers, and enforce guardrails via Amazon Bedrock AgentCore Policy to prevent unnecessary expensive model calls. Track cost-per-correct-response across tiers and refresh routing decisions quarterly using AWS Cost Explorer and Amazon CloudWatch dashboards to adjust thresholds based on observed escalation patterns."
+  },
+  {
+    "id": 9,
+    "query": "How does AWS implement zero trust principles in service-to-service interactions?",
+    "expected_source": "lenses/devops-guidance/AGSAD08.md",
+    "expected_answer": "AWS implements zero trust principles in service-to-service interactions by requiring that all calls between AWS services are authenticated and authorized using the same security mechanisms that customers use. This ensures that no service is trusted by default, and every request must be validated regardless of the network's trustworthiness, aligning with the zero trust model's requirement for continuous authentication, authorization, and validation. This approach enforces the principle of least privilege, granting access only when necessary and maintaining a secure perimeter through identity-centric controls."
+  },
+  {
+    "id": 10,
+    "query": "What is the Amazon 'working backwards' process and how does it help prioritize customer needs in product development?",
+    "expected_source": "lenses/devops-guidance/OATI06.md",
+    "expected_answer": "The Amazon 'working backwards' process is a customer-driven development approach that begins with a document outlining the product's core value to customers,typically in the form of a Press Release and Frequently Asked Questions (PRFAQ). This document includes detailed data points such as usage forecasts, adoption expectations, customer value, and delivery methods. The process starts by visualizing the ideal user experience and then iteratively works backwards to determine the technical and operational steps required to achieve that outcome. It helps prioritize customer needs by ensuring the development process is grounded in user expectations,leading to products and features that resonate with users. Mechanisms like surveys,interviews, visual mock-ups, use cases, and user guides are used to gather insights,clarify product intricacies, and provide tangible representations for the team.This approach fosters alignment, reduces errors, and accelerates deployment cycles by maintaining a clear focus on the desired customer experience throughout the development lifecycle."
+  },
+  {
+    "id": 11,
+    "query": "My agent has to look through every single tool description before deciding what to use, and it's slowing things down and picking wrong tools sometimes. Is there a way to make it only look at a smaller relevant set?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/agentic-ai/AGENTSEC02.md",
+    "note": "No mention of 'search', 'discovery', 'x_amz', or 'overload' — pure scenario description"
+  },
+  {
+    "id": 12,
+    "query": "If a feature stops working, what should the system do instead so users aren't left with nothing?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/agentic-ai/AGENTREL06.md",
+    "note": "Avoids 'fallback', 'capability', 'disabled' — describes the concept from a user-outcome angle"
+  },
+  {
+    "id": 13,
+    "query": "What happens if the memory store the agent relies on stops responding — does it just hang, or does it switch to something else?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/agentic-ai/AGENTREL03.md",
+    "note": "Avoids 'unreachability', 'fail-fast', 'cache' — describes behavior in plain language"
+  },
+  {
+    "id": 14,
+    "query": "When one AI agent needs to talk to another agent versus when it needs to call an external tool, are those handled the same way or differently?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/agentic-ai/AGENTPERF04.md",
+    "note": "Avoids 'protocol', 'MCP', 'A2A' entirely — asks about the distinction conceptually"
+  },
+  {
+    "id": 15,
+    "query": "I have an assistant connected to a huge number of external functions and every response takes longer because it has to consider all of them each time. What's the fix?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/agentic-ai/AGENTPERF06.md",
+    "note": "Rewritten scenario with zero shared vocabulary with the original eval query (Q6)"
+  },
+  {
+    "id": 16,
+    "query": "How do I stop an AI agent from looping forever or burning through way more compute/money than expected on a single task?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/agentic-ai/AGENTCOST01.md",
+    "note": "Avoids 'iteration limits', 'token budgets', 'termination conditions'"
+  },
+  {
+    "id": 17,
+    "query": "Is there a way to use a cheaper, faster model for easy requests and only bring in the expensive powerful model when the task actually needs it?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/agentic-ai/AGENTCOST02.md",
+    "note": "Avoids 'cascading', 'tiers', 'confidence threshold' — describes the pattern behaviorally"
+  },
+  {
+    "id": 18,
+    "query": "When different parts of AWS's own infrastructure talk to each other internally, do they just trust each other automatically or do they still have to prove who they are every time?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/devops-guidance/AGSAD08.md",
+    "note": "Avoids 'zero trust' entirely — asks about the underlying behavior"
+  },
+  {
+    "id": 19,
+    "query": "What's the Amazon approach where you write the announcement for a product before you actually build it, to make sure you're solving the right problem?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/devops-guidance/OATI06.md",
+    "note": "Describes 'working backwards'/PRFAQ without naming either term"
+  },
+  {
+    "id": 20,
+    "query": "How do you design an agent so that when part of it breaks, the whole thing doesn't just crash — it keeps doing something useful with less functionality?",
+    "query_type": "semantic_paraphrase",
+    "expected_source": "lenses/agentic-ai/AGENTREL06.md",
+    "note": "Second paraphrase of the fallback/graceful-degradation concept, different angle from Q12"
+  }
+]

@@ -1,0 +1,342 @@
+- id: test-001
+  question: agent keeps calling same tool over and over how to stop that
+  intent: rag
+  query_type: informal_realistic
+  golden_sources:
+    - lenses/agentic-ai/AGENTPERF02.md
+  ground_truth: You can set per-task iteration cap which helps to prevent calling same tool again and again.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+- id: test-002
+  question: how can i manage cost of demand and supply of my application?
+  intent: rag
+  query_type: informal_realistic
+  golden_sources:
+  - questions/COST09.md
+  ground_truth: >
+    First need to analyze the overall workload. You can use AWS CloudWatch to see resource utilisation and application performance.
+    Second you can use buffering and throttling in your application which smoothes traffic peak.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+
+- id: test-003
+  question: best practice for llm agent memory when db goes down
+  intent: rag
+  query_type: informal_realistic
+  golden_sources:
+    - lenses/agentic-ai/AGENTREL03.md
+  ground_truth: Use fail-fast logic that routes to an in-process or read-through cache fallback when the memory store shows elevated error rates.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+
+- id: test-004
+  question: how much does bedrock model routing actually save on cost, is it worth setting up
+  intent: rag
+  query_type: informal_realistic
+  golden_sources:
+    - lenses/agentic-ai/AGENTCOST02.md
+  ground_truth: Model cascading routes cheap requests to smaller models and escalates to expensive models only on low confidence, reducing average cost per request; use Bedrock intelligent prompt routing or explicit task classification.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+
+- id: test-005
+  question: what happens when i disable a feature flag do users just get errors
+  intent: rag
+  query_type: informal_realistic
+  golden_sources:
+    - lenses/agentic-ai/AGENTREL06.md
+  ground_truth: The system should fall back to a documented reduced-capability behavior instead of failing outright, and communicate the degradation to users.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+  
+
+- id: test-006
+  question: zero trust AWS internal services explain like im new to this
+  intent: rag
+  query_type: informal_realistic
+  golden_sources:
+    - lenses/devops-guidance/AGSAD08.md
+  ground_truth: AWS services authenticate and authorize every call to each other using the same mechanisms customers use, so no service is trusted by default.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+
+- id: test-007
+  question: PRFAQ amazon what is it used for
+  intent: rag
+  query_type: informal_realistic
+  golden_sources:
+    - lenses/devops-guidance/OATI06.md
+  ground_truth: A PRFAQ (Press Release/FAQ) is written before building a product to define customer value up front, then teams work backwards to define technical requirements.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+
+- id: test-008
+  question: agent budget runaway cost protection bedrock
+  intent: rag
+  query_type: informal_realistic
+  golden_sources:
+    - lenses/agentic-ai/AGENTCOST01.md
+  ground_truth: Enforce per-session token budgets and iteration caps via Bedrock AgentCore Policy at the gateway boundary, and monitor per-cycle token consumption via Observability.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+
+- id: test-009
+  question: How can i get quick responses from ML application?
+  intent: rag
+  query_type: semantic_paraphrase
+  golden_sources:
+    - lenses/machine-learning/MLPERF05.md
+  ground_truth: >
+    When the lowest possible
+    latency is essential, deploying inference directly on edge devices
+    avoids costly roundtrips to cloud API endpoints. Edge deployments
+    are particularly valuable for use cases like predictive maintenance
+    in factories, where immediate local responses are critical.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+
+- id: test-010
+  question: How to secure hybrid network connectivity between AWS and on-premises environments over the internet?
+  intent: rag
+  query_type: semantic_paraphrase
+  golden_sources:
+  - lenses/hybrid-networking/HNSEC05.md
+  ground_truth: For hybrid network connectivity over the internet, AWS recommends
+    using IPSec VPN to create encrypted tunnels between cloud and on-premises environments.
+    This ensures all data transmitted is encrypted and protected from unauthorized
+    access. Implementation involves establishing IPSec VPN tunnels (e.g., AWS Site-to-Site
+    VPN), configuring strong encryption and authentication for endpoints, monitoring
+    tunnel health, and restricting routable subnets to approved ranges. Benefits include
+    encryption for data in transit, reduced risk of interception or tampering, compliance
+    support, and secure hybrid networking without dedicated links. The risk of not
+    following this practice is classified as high.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+- id: test-011
+  question: How can i measure instance utilization goals for sustainability?
+  intent: rag
+  query_type: semantic_paraphrase
+  golden_sources:
+  - lenses/financial-services/FSISUS12.md
+  ground_truth: To track progress toward instance utilization goals for sustainability,
+    AWS provides the AWS Customer Carbon Footprint Tool, which reports on emissions
+    from AWS usage (including Amazon EC2) following Greenhouse Gas (GHG) Protocol
+    standards. This tool allows you to analyze changes in emissions over time and
+    forecast emissions across your sustainability journey. Additionally, Amazon CloudWatch
+    provides a unified view of metrics (both default and custom) to benchmark instance
+    performance, while AWS Compute Optimizer helps identify optimal instance types.
+    For generative AI workloads, SageMaker Inference Recommender, AWS Trainium, and
+    EC2 Inferentia instances can be used for energy-efficient benchmarking.
+  demonstrates_feature: baseline
+  notes: Dense should understand measure is semantically close to track progress
+- id: test-012
+  question: What format is required for maintaining log and data?
+  intent: rag
+  query_type: semantic_paraphrase
+  golden_sources:
+  - lenses/financial-services/FSISUS12.md
+  ground_truth: write once, read many (WORM) format is required to maintain and preserve electronic records exclusively in a non- rewriteable, non-erasable format.
+  demonstrates_feature: baseline
+  notes: Dense should able to find relevant doc
+
+- id: test-013
+  question: Which tools can i use for anomaly detection in data quality monitoring?
+  intent: rag
+  query_type: semantic_paraphrase
+  golden_sources:
+  - lenses/devops-guidance/QADT04.md
+  ground_truth: The documentation lists several AWS services and tools for data anomaly
+    detection, including Amazon Lookout for Metrics (a service for proactively monitoring
+    business health), Amazon QuickSight (with ML-powered anomaly detection for outliers),
+    Amazon Kinesis (for detecting data anomalies in streams), and Deequ (an open-source
+    library for testing data quality at scale, including anomaly detection examples).
+    Additionally, it references AWS resources like the anomaly detection overview
+    page and related blog posts for further guidance on implementation.
+  demonstrates_feature: baseline
+  notes: Synthetically generated from raw file QADT04.md.
+
+- id: test-014
+  question: How does IAST improve security testing accuracy compared to SAST and DAST?
+  intent: rag
+  query_type: exact_keyword
+  golden_sources:
+  - lenses/devops-guidance/QAST08.md
+  ground_truth: Interactive Application Security Testing (IAST) improves security
+    testing accuracy by combining the strengths of Static Application Security Testing
+    (SAST) and Dynamic Application Security Testing (DAST) through an inside-out approach.
+    Unlike SAST, which examines source code, or DAST, which inspects a running system,
+    IAST uses embedded agents with access to application code, system memory, stack
+    traces, and requests/responses to monitor system behavior during runtime. This
+    real-time observability provides contextual understanding, significantly reducing
+    false positive rates. When vulnerabilities are detected, IAST offers deeper insights
+    into their impact, delivering proof that flagged vulnerabilities are genuine and
+    actionable. The agents are included during the build process for active monitoring
+    in testing environments but should be turned off or set to passive mode in production
+    to avoid performance overhead.
+  demonstrates_feature: sparse
+  notes: Sparse should work here
+
+- id: test-015
+  question: What does x_amz_bedrock_agentcore_search do?
+  intent: rag
+  query_type: exact_keyword
+  golden_sources: 
+  - lenses/agentic-ai/AGENTSEC02.md
+  ground_truth: Gateway's built-in x_amz_bedrock_agentcore_search tool exposes semantic tool discovery so agents locate relevant tools through natural language rather than seeing the full inventory, reducing the reasoning surface the model reasons across on any given turn.
+  demonstrates_feature: sparse
+  notes: Sparse works better here
+- id: test-016
+  question: What is the risk level if SUS01-BP01 Region selection best practice is not established?
+  intent: rag
+  query_type: exact_keyword
+  golden_sources:
+  - lenses/sustainability/SUS01.md
+  ground_truth: The level of risk if this best practice is not established is rated as Medium.
+  demonstrates_feature: sparse
+  notes: Sparse works better here
+
+
+- id: test-017
+  question: What tool should I use to calculate workload cost across different AWS Regions?
+  intent: rag
+  query_type: exact_keyword
+  golden_sources:
+  - lenses/sustainability/SUS01.md
+  ground_truth: Use the AWS Pricing Calculator to calculate the cost of the workload in each candidate Region.
+  demonstrates_feature: sparse
+  notes: Sparse works better here
+
+
+- id: test-018
+  question: too many tools breaking my agent context window whats the AWS recommended fix
+  intent: rag
+  query_type: multi-hop
+  golden_sources:
+    - lenses/agentic-ai/AGENTPERF06.md
+    - lenses/agentic-ai/AGENTSEC02.md
+  ground_truth: Use semantic tool discovery to filter to a relevant subset (5-10 tools) instead of exposing the full catalog every turn.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched
+
+- id: test-019
+  question: I'm building an ML model. Should I care more about accuracy or business KPIs?
+  intent: rag
+  query_type: multi-hop
+  golden_sources:
+    - lenses/machine-learning/MLPERF01.md
+    - lenses/machine-learning/MLPERF02.md
+  ground_truth: >
+    Start with business KPIs, not model accuracy. First define what success means for the business—for example reducing customer churn by 10%, cutting processing time by 40%, or saving 200 hours of manual work each month. Then choose evaluation metrics that support those goals.
+    For instance, if you're building a fraud detection model, missing fraud (false negatives) may cost much more than investigating legitimate transactions (false positives), so recall might matter more than accuracy. Also define acceptable error thresholds before deployment and monitor those metrics continuously in production to detect model drift.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched across multiple docs 
+
+- id: test-020
+  question: What should I consider when deploying a production-ready generative AI application for financial services on AWS?
+  intent: rag
+  query_type: multi-hop
+  golden_sources:
+    - lenses/financial-services/FSIOPS02.md
+    - lenses/financial-services/FSICOST09.md
+    - lenses/generative-ai/GENPERF02.md
+  ground_truth: >
+    Build a secure, compliant, and high-performing solution by understanding AWS's Shared Responsibility Model, 
+    establishing cloud risk and prompt governance, and protecting sensitive data with appropriate privacy controls. 
+    Define data retention policies and automate lifecycle transitions to cost-effective storage tiers for long-term compliance. 
+    Finally, select the right foundation model, optimize inference parameters, and load test endpoints to validate response quality, latency, and scalability before production.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched across multiple docs
+- id: test-021
+  question: How should I build a responsible AI monitoring and continuous improvement process on AWS?
+  intent: rag
+  query_type: multi-hop
+  golden_sources:
+    - lenses/responsible-ai/RAIMON01.md
+    - lenses/responsible-ai/RAIMON02.md
+    - lenses/responsible-ai/RAIMON03.md
+  ground_truth: >
+    Create monitoring with user consent, privacy controls, drift detection, dashboards, and human review workflows. 
+    Use monitoring insights to trigger retraining, guardrail updates, and other improvements through regular review 
+    cycles and automated pipelines. When changes affect datasets or AI systems, honor stakeholder obligations by managing 
+    dataset retention, notifying downstream consumers, and following documented decommissioning processes.
+  demonstrates_feature: baseline
+  notes: Demonstrates how normal user query is semantically searched across multiple docs
+
+
+- id: test-022
+  question: What's AWS's refund policy if I cancel a reserved EC2 instance early?
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: There is no context available regarding AWS refund policy.
+  demonstrates_feature: baseline
+  notes: Demonstrates how context absence does not give irrelevant answers
+
+- id: test-023
+  question: How do I reset my AWS root account password if I lost access to my MFA device?
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: No context is available . I cannot answer this
+  demonstrates_feature: baseline
+  notes: Demonstrates how context absence does not give irrelevant answers
+
+- id: test-024
+  question: What's the maximum file size I can upload to S3 in a single PUT request?
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: There is no such context available regarding maximum file size upload to S3 in single PUT request.
+  demonstrates_feature: baseline
+  notes: Demonstrates how context absence does not give irrelevant answers
+
+- id: test-025
+  question: Can I get a discount on Bedrock pricing for a university research project?
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: I cannot answers as no such context is available regarding this.
+  demonstrates_feature: baseline
+  notes: Demonstrates how context absence does not give irrelevant answers
+
+- id: test-026
+  question: What's the weather like in the us-east-1 data center region right now?  
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: I can't answer question as there is no context available regarding current weather in any of AWS regions.
+  demonstrates_feature: baseline
+  notes: Demonstrates how context absence does not give irrelevant answers
+
+- id: test-027
+  question: Does AWS support quantum computing instances yet?  
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: No such context is available for the question.
+  demonstrates_feature: baseline
+  notes: Demonstrates how context absence does not give irrelevant answers
+- id: test-028
+  question: What's the exact latency threshold AWS recommends before an agent tool call is considered too slow?
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: There is no context available which gives exact latency threshold AWS recommends before an agent tool is considred too slow.
+  demonstrates_feature: baseline
+  notes: Tests whether system fabricates a specific number when the docs only give qualitative guidance (e.g. "fast" without a hard threshold), rather than correctly saying no specific number is given.
+- id: test-029
+  question: How do I prepare and label training data before deploying my machine learning model?
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: There is no such context available on the bais of which I can answer.
+  demonstrates_feature: baseline
+  notes: Tests whether system fabricates answer when the docs only mention labeling but not how
+- id: test-030
+  question: What are the steps to fine tune model for generative ai application?
+  intent: rag
+  query_type: unanswerable
+  golden_sources: []
+  ground_truth: There is no context provided for te steps to fine tune a model for generative ai application
+  demonstrates_feature: baseline
+  notes: Tests whether system fabricates answer when the docs only mention labeling but not how
