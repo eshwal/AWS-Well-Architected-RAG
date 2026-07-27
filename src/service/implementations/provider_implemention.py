@@ -32,6 +32,7 @@ class LangChainPineconeDatabase(BaseVectorDatabase):
     def __init__(self, embedding_engine: BaseEmbeddingEngine):
         native_embeddings = embedding_engine.get_native_embeddings()
         self.store = PineconeVectorStore(
+            pinecone_api_key= settings.VECTOR_DB_API_KEY,
             index_name=settings.INDEX_NAME, 
             embedding=native_embeddings
         )
