@@ -9,6 +9,7 @@ from src.service.sparse_index_loader import get_sparse_index
 from src.config import settings
 from src.utils import retry_with_backoff
 import asyncio
+from langsmith import traceable
 logger = logging.getLogger(__name__)
 
 LLM_SEMAPHORE = asyncio.Semaphore(2)
@@ -61,6 +62,7 @@ def get_chain():
 def format_docs(docs:list):
     return "\n\n".join(f'[Sources: {doc.document.metadata.get("source","Unknown")}]:\n{doc.document.page_content}' for doc in docs)
 
+@traceable(name="sparse_retrieval")
 @retry_with_backoff(max_attempts=3,base_delay=2)
 async def sparse_context(user_query:str,top_k:int=5):
     '''Create context for sparse search'''
@@ -72,6 +74,7 @@ async def sparse_context(user_query:str,top_k:int=5):
 
     return sparse_docs, format_docs(sparse_docs)
 
+@traceable(name="dense_retrieval")
 @retry_with_backoff(max_attempts=3,base_delay=2)
 async def dense_context(user_query:str,top_k:int=5):
     '''Create context for vector search'''
@@ -79,6 +82,7 @@ async def dense_context(user_query:str,top_k:int=5):
 
     return dense_docs,format_docs(dense_docs)
 
+@traceable(name="hybrid_retrieval")
 @retry_with_backoff(max_attempts=3,base_delay=2)
 async def hybrid_context(user_query:str,sparse_top_k:int=10,dense_top_k:int=10,top_k:int=5,rrf_const:int=60):
     try:
@@ -92,6 +96,7 @@ async def hybrid_context(user_query:str,sparse_top_k:int=10,dense_top_k:int=10,t
         logger.error(f'Could not create hybrid context:{str(e)}')
         raise
 
+@traceable(name="generation")
 @retry_with_backoff(max_attempts=3, base_delay=2)
 async def generate_answer(context, question):
     rag_chain = get_chain()
