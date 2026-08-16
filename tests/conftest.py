@@ -20,6 +20,7 @@ os.environ.setdefault("DEEPEVAL_RETRY_INITIAL_SECONDS","5")   # initial backoff
 os.environ.setdefault("LANGCHAIN_TRACING_V2","true")
 os.environ.setdefault("LANGCHAIN_API_KEY","test")
 os.environ.setdefault("LANGCHAIN_PROJECT","test")
+os.environ.setdefault("DEMO_API_KEY","")
 
 from unittest.mock import MagicMock, patch
 

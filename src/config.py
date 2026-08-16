@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     LANGCHAIN_TRACING_V2:bool
     LANGCHAIN_API_KEY: str
     LANGCHAIN_PROJECT: str
+    DEMO_API_KEY: str
     model_config = SettingsConfigDict(
         env_file=".env"
     )

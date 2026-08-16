@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends
 from contextlib import asynccontextmanager
 
+from src.auth import verify_api_key
 from src.service.sparse_index_loader import load_sparse_index_from_cache
 from src.models.model import ChatRequest,ChatResponse
 from src.service.rag import query_compliance_platform,should_use_sparse_fallback
@@ -13,7 +14,7 @@ async def lifespan(app:FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@app.post("/query",response_model=ChatResponse)
+@app.post("/query",response_model=ChatResponse,dependencies=[Depends(verify_api_key)])
 async def query(req:ChatRequest):
     question = req.question
 
