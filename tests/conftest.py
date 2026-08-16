@@ -14,10 +14,10 @@ os.environ.setdefault("GENERATION_MODEL","test")
 os.environ.setdefault("GRADER_MODEL", "test")
 os.environ.setdefault("GRADER_API_KEY","test")
 os.environ.setdefault("GRADER_BASE_URL","test")
-os.environ.setdefault("DEEPEVAL_PER_TASK_TIMEOUT_SECONDS_OVERRIDE",1200)
-os.environ.setdefault("DEEPEVAL_RETRY_MAX_ATTEMPTS",3)
-os.environ.setdefault("DEEPEVAL_RETRY_CAP_SECONDS",60)     # max wait between retries
-os.environ.setdefault("DEEPEVAL_RETRY_INITIAL_SECONDS",5)   # initial backoff
+os.environ.setdefault("DEEPEVAL_PER_TASK_TIMEOUT_SECONDS_OVERRIDE","1200")
+os.environ.setdefault("DEEPEVAL_RETRY_MAX_ATTEMPTS","3")
+os.environ.setdefault("DEEPEVAL_RETRY_CAP_SECONDS","60")     # max wait between retries
+os.environ.setdefault("DEEPEVAL_RETRY_INITIAL_SECONDS","5")   # initial backoff
 os.environ.setdefault("LANGCHAIN_TRACING_V2",True)
 os.environ.setdefault("LANGCHAIN_API_KEY","test")
 os.environ.setdefault("LANGCHAIN_PROJECT","test")
