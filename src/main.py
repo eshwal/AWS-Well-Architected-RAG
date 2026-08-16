@@ -1,5 +1,6 @@
 from fastapi import FastAPI,Depends
 from contextlib import asynccontextmanager
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from src.auth import verify_api_key
 from src.service.sparse_index_loader import load_sparse_index_from_cache
@@ -13,6 +14,8 @@ async def lifespan(app:FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+Instrumentator().instrument(app).expose(app,endpoint="/metrics")
 
 @app.post("/query",response_model=ChatResponse,dependencies=[Depends(verify_api_key)])
 async def query(req:ChatRequest):
