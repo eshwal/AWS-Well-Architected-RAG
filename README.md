@@ -6,6 +6,20 @@ other lenses), built with LangChain, Pinecone, and Mistral — with an evaluatio
 harness used to make evidence-based retrieval architecture decisions rather than
 defaulting to whatever technique is trendiest.
 
+Live demo: https://aws-well-architected-rag-production.up.railway.app (API key required — see Access below)
+
+## What this project demonstrates
+
+Beyond the RAG pipeline itself, this project is built and operated as a small production system:
+
+- Containerized with Docker
+- Tested (pytest, mocked external calls — no live API dependency in CI)
+- CI/CD via GitHub Actions: automated tests on every push, Docker image built and published to GHCR on merge to main
+- Deployed on Railway with auto-deploy from main
+- API-key-authenticated to protect the live endpoint from unrestricted use
+- Instrumented with Prometheus-compatible metrics (/metrics, live in production), visualized via a local Grafana dashboard run on-demand (docker compose up in monitoring/)
+- Evaluation-gated deployment path scoped and ready (currently manual-trigger, not yet auto-blocking — see Evaluation-gated deploys)
+
 ## Architecture
 
 - **Retrieval**: dense (vector), sparse (BM25), and hybrid (RRF fusion) modes, all
@@ -35,7 +49,7 @@ evaluated, not skipped. The investigation:
 
 1. **Found and fixed a real bug** in the RRF implementation — an operator-precedence
    error meant fused scores were increasing with rank instead of decaying, silently
-   inverting the intended ranking logic.
+   inverting the intended ranking logic.(Covered by a regression test — see tests/test_hybrid.py.)
 2. **Built a confusion-matrix evaluation** (queries hybrid uniquely recovers vs. queries
    it uniquely breaks, relative to dense-only) rather than trusting aggregate hit rates,
    after finding that identical aggregate scores can hide completely different
@@ -74,14 +88,6 @@ Dense remains the production default as the standard, well-understood choice, wi
 tighter-constructed query set (deliberately avoiding all source vocabulary) tracked as
 follow-up work.
 
-
-## Provider swapping in practice
-
-Embedding, LLM, and vector-store providers are swappable via the interface/factory
-pattern without touching core RAG logic — adding a provider means implementing the
-interface and registering it in the factory, a scoped change rather than a rewrite.
-
-
 ## What's implemented vs. scoped out
 
 **Implemented**: dense/sparse/hybrid retrieval, RRF fusion (with a documented and fixed
@@ -106,13 +112,14 @@ backoff/checkpointing on retrieval, generation, and ingestion.
   fail fast for waiting users; async ingestion at scale would warrant a queue-based
   architecture with a dead-letter queue for permanently failing batches. Neither
   pattern has a load condition to justify it yet in this project's current shape.
-- **Online evaluation** — evaluation here is offline (run against a fixed test set,
+- **Online evaluation** — current evaluation is offline by design(fixed test set,
   decoupled from the request path, never adding judge-model latency to a live
   response). In production this would extend to async, sampled scoring of live traffic
   to catch quality drift, with flagged failures reviewed and folded into the offline
   golden dataset — still never run synchronously in the request path.
 - The eval schema includes an `intent` field to support future routing across
   RAG / SQL / web-search subsystems; only the RAG path is implemented in this version.
+- **Rate limiting** — API key auth is in place; request-level rate limiting is a scoped, known next step, not yet implemented.
 
 ## Running it
 
@@ -124,20 +131,57 @@ python -m src.scripts.build_sparse_index
 # start the API
 uvicorn src.main:app --reload
 
+# or via Docker
+docker build -t rag-app .
+docker run --env-file .env -p 8000:8000 rag-app
+
 # retrieval + generation
 POST /query
+Headers: x-api-key: <your key>
 { "question": "How do I prevent an agent from getting overwhelmed by tool overload?" }
 
 # evaluation (resumable — pass --resume-from a previous run's output to continue)
 python -m evals.run_eval --profile dense
 python -m evals.run_eval --profile dense --resume-from deepevals/output/<previous>.json
 
+# tests
+pip install -r requirements-dev.txt
+pytest -v
+
+# local monitoring(prometheus+grafana)
+cd monitoring
+docker compose up
+# Prometheus: http://localhost:9090
+# Grafana:    http://localhost:3000
+
 # latency benchmark (one-off, not a production monitoring tool)
 python -m src.scripts.measure_latency
 ```
+## Access
 
-Tracing available via LangSmith when `LANGCHAIN_TRACING_V2=true` is set in `.env`.
+The live deployment is protected by an API key (x-api-key header) to prevent unrestricted use of paid Pinecone/Mistral API calls. Request access, or use /docs for an interactive Swagger UI (enter the key via the input header field once provided).
+
+## CI/CD pipeline
+
+On every push:
+1. Test — pytest suite runs (external calls mocked, no live credentials required)
+2. Build & push — on merge to main, a Docker image is built and published to GHCR as a versioned, CI-validated artifact
+3. Deploy — Railway auto-deploys from main via a repo-based build, independent of the GHCR publish step
+
+## Evaluation-gated deploys
+
+The deepeval harness can be run in CI (workflow_dispatch, manual trigger) to check for quality regression before deploying — currently informational, not yet auto-blocking. Auto-gating (failing the build if Faithfulness/Answer Relevancy drop below a threshold) is a deliberate next step, held off until enough runs have been collected to set a threshold that reflects real variance rather than a guess — LLM-judged evals carry some run-to-run noise, and a threshold set without that data risks false failures.
+
+## Provider swapping in practice
+
+Embedding, LLM, and vector-store providers are swappable via the interface/factory
+pattern without touching core RAG logic — adding a provider means implementing the
+interface and registering it in the factory, a scoped change rather than a rewrite.
 
 ## Stack
 
 LangChain · Pinecone · Mistral  · deepeval · FastAPI · LangSmith
+
+## Tracing 
+
+Available via LangSmith when `LANGCHAIN_TRACING_V2=true` is set in `.env`.
