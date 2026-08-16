@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     DEEPEVAL_RETRY_MAX_ATTEMPTS: str
     DEEPEVAL_RETRY_CAP_SECONDS: str
     DEEPEVAL_RETRY_INITIAL_SECONDS:str
-    LANGCHAIN_TRACING_V2:str
+    LANGCHAIN_TRACING_V2:bool
     LANGCHAIN_API_KEY: str
     LANGCHAIN_PROJECT: str
     model_config = SettingsConfigDict(
